@@ -19,10 +19,11 @@ public class UserDataServiceApplication {
 
         SpringApplication.run(UserDataServiceApplication.class, args);
 
-        printUserData();
+        // Method to print response to console in a more readable format
+        // printUserData();
     }
 
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings("unused")
     private static void printUserData() {
 
         List<UserView> userViews = getUserViews();

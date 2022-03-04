@@ -30,11 +30,22 @@ public class UserDataUtil {
         return users;
     }
 
+    private static Map<String, Set<String>> buildProjectMembershipMap(List<ProjectMembershipView> projectMembershipViews) {
+
+        Map<String, Set<String>> projectMembershipMap = new HashMap<>();
+
+        projectMembershipViews.stream()
+                .filter(v -> StringUtils.hasText(v.userId))
+                .forEach(v -> projectMembershipMap.computeIfAbsent(v.userId, k -> new HashSet<>()).add(v.projectId));
+
+        return projectMembershipMap;
+    }
+
     private static UserView createUserView(RegisteredUserView registeredUserView,
                                            Map<String, Set<String>> projectMembershipMap) {
 
         UserView userView = new UserView();
-        userView.id = registeredUserView.id;
+        setCommonUserViewFields(userView, registeredUserView.id, registeredUserView.emailAddress, registeredUserView.languageCode, projectMembershipMap);
         userView.city = registeredUserView.city;
         userView.company = registeredUserView.company;
         userView.country = registeredUserView.country;
@@ -45,9 +56,6 @@ public class UserDataUtil {
         userView.state = registeredUserView.state;
         userView.zipCode = registeredUserView.zipCode;
         userView.disclaimerAccepted = registeredUserView.disclaimerAccepted;
-        userView.languageCode = registeredUserView.languageCode;
-        userView.emailAddress = registeredUserView.emailAddress;
-        userView.projectIds = projectMembershipMap.get(registeredUserView.id) != null ? projectMembershipMap.get(registeredUserView.id) : Collections.emptySet();
 
         return userView;
     }
@@ -56,24 +64,21 @@ public class UserDataUtil {
                                            Map<String, Set<String>> projectMembershipMap) {
 
         UserView userView = new UserView();
-        userView.id = unregisteredUserView.id;
-        userView.emailAddress = unregisteredUserView.emailAddress;
-        userView.languageCode = unregisteredUserView.languageCode;
+        setCommonUserViewFields(userView, unregisteredUserView.id, unregisteredUserView.emailAddress, unregisteredUserView.languageCode, projectMembershipMap);
         userView.registrationId = unregisteredUserView.registrationId;
         userView.registrationIdGeneratedTime = unregisteredUserView.registrationIdGeneratedTime;
-        userView.projectIds = projectMembershipMap.get(unregisteredUserView.id) != null ? projectMembershipMap.get(unregisteredUserView.id) : Collections.emptySet();
 
         return userView;
     }
 
-    private static Map<String, Set<String>> buildProjectMembershipMap(List<ProjectMembershipView> projectMembershipViews) {
-
-        Map<String, Set<String>> projectMembershipMap = new HashMap<>();
-
-        projectMembershipViews.stream()
-                .filter(v -> StringUtils.hasText(v.userId))
-                .forEach(v -> projectMembershipMap.computeIfAbsent(v.userId, k -> new HashSet<>()).add(v.projectId));
-
-        return projectMembershipMap;
+    private static void setCommonUserViewFields(UserView userView,
+                                                String id,
+                                                String emailAddress,
+                                                String languageCode,
+                                                Map<String, Set<String>> projectMembershipMap) {
+        userView.id = id;
+        userView.emailAddress = emailAddress;
+        userView.languageCode = languageCode;
+        userView.projectIds = projectMembershipMap.get(id) != null ? projectMembershipMap.get(id) : Collections.emptySet();
     }
 }

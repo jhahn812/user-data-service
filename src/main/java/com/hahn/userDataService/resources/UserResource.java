@@ -8,7 +8,6 @@ import com.hahn.userDataService.models.UnregisteredUserView;
 import com.hahn.userDataService.models.UserView;
 import com.hahn.userDataService.utils.UserDataUtil;
 import com.hahn.userDataService.utils.UserRestUtil;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserResource {
 
-    @RequestMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/all")
     public List<UserView> getAllUsers() {
 
         List<RegisteredUserView> registeredUserViews = UserRestUtil.getUserData(UserRestUtil.REGISTERED_USERS_URL);
@@ -27,7 +26,7 @@ public class UserResource {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        // Due to the getUserData returning a generically typed list, needed to convert value to provider type information that was lost
+        // Due to the getUserData returning a generically typed list, needed to convert value to provide type information that was lost
         return UserDataUtil.createUserViews(
                 mapper.convertValue(registeredUserViews, new TypeReference<>() {
                 }),
