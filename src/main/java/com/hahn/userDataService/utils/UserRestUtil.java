@@ -20,9 +20,8 @@ public class UserRestUtil {
         return new HttpEntity<>(new HttpHeaders());
     }
 
-    public static <T> List<T> getUserData(String url) {
+    public static <T> List<T> getUserData(String url, RestTemplate restTemplate) {
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpEntity = UserRestUtil.getHttpEntity();
 
         ResponseEntity<List<T>> exchange = restTemplate.exchange(
